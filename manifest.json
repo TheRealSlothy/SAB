@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "SAB",
+  "version": "4.20",
+  "description": "Blocks YT ADs",
+  "permissions": ["storage", "scripting", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": ["*://www.youtube.com/*"],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "default_title": "Slothy's AD Blocker"
+  }
+}
