@@ -1,38 +1,35 @@
 let savedAdTimestamp = 0;
 let restoreAfterAd = false;
+let wasPreRoll = false;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Background received message:", message);
+  const tabId = sender.tab?.id;
 
-  if (message.action === "saveAdData") {
-    if (typeof message.savedAdTimestamp === 'number' && message.savedAdTimestamp > 2) {
-      savedAdTimestamp = message.savedAdTimestamp;
+  switch (message.action) {
+    case "saveAdData":
+      savedAdTimestamp = message.savedTime || 0;
+      wasPreRoll = message.wasPreRoll || false;
       restoreAfterAd = true;
-      console.log("Saved timestamp:", savedAdTimestamp);
-    } else {
-      console.warn("Ignored invalid timestamp:", message.savedAdTimestamp);
-    }
-  } else if (message.action === "getAdData") {
-    console.log("Sending saved timestamp:", savedAdTimestamp);
-    sendResponse({
-      savedAdTimestamp,
-      restoreAfterAd
-    });
-    restoreAfterAd = false; // Reset after use
-  } else {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs.length) return;
+      console.log("Saved ad data:", { savedAdTimestamp, wasPreRoll });
+      break;
 
-      const tabId = tabs[0].id;
-      if (message.action === "muteTab") {
-        chrome.tabs.update(tabId, { muted: true });
-      } else if (message.action === "unmuteTab") {
-        chrome.tabs.update(tabId, { muted: false });
-      } else if (message.action === "reloadTab") {
-        chrome.tabs.reload(tabId);
-      }
-    });
+    case "getAdData":
+      sendResponse({ savedAdTimestamp, wasPreRoll, restoreAfterAd });
+      restoreAfterAd = false;
+      break;
+
+    case "muteTab":
+      tabId && chrome.tabs.update(tabId, { muted: true });
+      break;
+
+    case "unmuteTab":
+      tabId && chrome.tabs.update(tabId, { muted: false });
+      break;
+
+    case "reloadTab":
+      tabId && chrome.tabs.reload(tabId);
+      break;
   }
 
-  return true; // Keep message channel open for async sendResponse
+  return true;
 });
