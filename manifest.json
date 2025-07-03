@@ -3,7 +3,7 @@
   "name": "SAB",
   "version": "4.20",
   "description": "Blocks YT ADs",
-  "permissions": ["storage", "scripting", "tabs"],
+  "permissions": ["storage", "scripting", "tabs", "activeTab"],
   "background": {
     "service_worker": "background.js"
   },
@@ -22,6 +22,7 @@
     "128": "icon128.png"
   },
   "action": {
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",
