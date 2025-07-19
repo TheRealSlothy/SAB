@@ -1,3 +1,6 @@
 # SAB
 Slothy's Ad Blocker
-Not Currently Working
+
+More Features To Come.....
+
+Please Report Any Bugs You Find To Slothy.DM@protonmail.com
