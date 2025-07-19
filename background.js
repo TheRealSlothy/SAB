@@ -1,35 +1,17 @@
-let savedAdTimestamp = 0;
-let restoreAfterAd = false;
-let wasPreRoll = false;
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  const tabId = sender.tab?.id;
+    if (message.type === 'MUTE_TAB') {
+        chrome.tabs.update(sender.tab.id, { muted: true });
+        sendResponse({ status: 'muted' });
+    } else if (message.type === 'UNMUTE_TAB') {
+        chrome.tabs.update(sender.tab.id, { muted: false });
+        sendResponse({ status: 'unmuted' });
+    }
+    return true; // Keep message channel open for async response
+});
 
-  switch (message.action) {
-    case "saveAdData":
-      savedAdTimestamp = message.savedTime || 0;
-      wasPreRoll = message.wasPreRoll || false;
-      restoreAfterAd = true;
-      console.log("Saved ad data:", { savedAdTimestamp, wasPreRoll });
-      break;
-
-    case "getAdData":
-      sendResponse({ savedAdTimestamp, wasPreRoll, restoreAfterAd });
-      restoreAfterAd = false;
-      break;
-
-    case "muteTab":
-      tabId && chrome.tabs.update(tabId, { muted: true });
-      break;
-
-    case "unmuteTab":
-      tabId && chrome.tabs.update(tabId, { muted: false });
-      break;
-
-    case "reloadTab":
-      tabId && chrome.tabs.reload(tabId);
-      break;
-  }
-
-  return true;
+// Clean up storage when tab is closed
+chrome.tabs.onRemoved.addListener((tabId) => {
+    chrome.storage.local.remove(`lastSafeTime_${tabId}`, () => {
+        console.log(`[AdBlock] Cleaned storage for tab ${tabId}`);
+    });
 });
