@@ -9,6 +9,7 @@ Edge: https://microsoftedge.microsoft.com/addons/detail/sab/kpamgmacplekafimmkim
 
 Chrome: [COMING SOON]
 
+FireFox [COMING SOON]
 
 
 Please Report Any Bugs You Find To Slothy.DM@protonmail.com
